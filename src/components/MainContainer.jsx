@@ -7,8 +7,10 @@ const MainContainer = () => {
     return store.app?.isMenuOpen;
   });
   return (
-    <div className={`mx-4 ${toggleMenu ? "w-4/6" : "w-screen "}`}>
+    <div className={`mx-2 ${toggleMenu ? "w-5/6" : "w-screen "}`}>
+      {/* // <div className={` w-4/6 flex flex-col mx-auto`}> */}
       <ButtonList />
+
       <VideoContainer />
     </div>
   );

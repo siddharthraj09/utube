@@ -1,15 +1,49 @@
 import { FaSearch } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { toggleMenu } from "../utils/redux/appSlice";
+import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { YOUTUBE_SEARCH_API_URL } from "../utils/constants";
+import { useSelector } from "react-redux";
+import { cacheResult } from "../utils/redux/searchSlice";
 
 const Head = () => {
   const dispatch = useDispatch();
+  const [searchQuery, setSearchQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestion] = useState(false);
 
+  const searchCache = useSelector((store) => store.search);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchCache[searchQuery]) {
+        setSuggestions(searchCache[searchQuery]);
+      } else {
+        getSearchSuggestion();
+      }
+    }, 400);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [searchQuery]);
+
+  const getSearchSuggestion = async () => {
+    const searchSuggestions = await fetch(YOUTUBE_SEARCH_API_URL + searchQuery);
+    const json = await searchSuggestions.json();
+    console.log(json[1]);
+    setSuggestions(json[1]);
+    dispatch(
+      cacheResult({
+        [searchQuery]: json[1],
+      })
+    );
+  };
   const toggleMenuHandler = () => {
     dispatch(toggleMenu());
   };
   return (
-    <div className="flex justify-between p-2 my-2 shadow-lg w-screen">
+    <div className="flex   justify-between p-2 py-4 shadow-lg w-screen sticky top-0  bg-white">
       <div className="flex w-2/12 ">
         <img
           onClick={toggleMenuHandler}
@@ -17,20 +51,41 @@ const Head = () => {
           src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAb1BMVEX///8iICGSkZIkHyEPDA3z8vIyMTEhGx40MDEeHB4jICEeHR4AAAAxMTEgHh4gHB3W1tYtKyyXlpe6uroKBQhzcnJ+fX7CwsKysrJmZWX19fXk5OQYFhc5ODgoJidta2xUVFRfXV7Kysqsq6yjo6MHDa+eAAAB8UlEQVR4nO3c3VLaQBgGYJY/IQtE1Iogrfbn/q+xCaQ2TqtFm222+jwHDC8MMO8EdjnY+QYDAAAAAAAAAAAAAAAAeI/OL4Z5uDhP0m+yXYwzcbX4cJug4d045GN8Pem84GYd+67VUq6/dN7wou9Sjy1u0jQcjUZ9V2skaHhZfUuLbBrGYtN5w8F2HLNpGFOsNIPddlo3XGUgTK9T7BbVFzWbHX+zS1IQAAAAAAAAAABeZJKHVPXO76dHs9msul1OH+JfpOmr0ufuz15Wbhb78uzBvJzPWym2U/XU6Sk+lc6eTnEfv3Zf8PZjeTib2AihnYpwOJl5Qhp1kULY33d/1Pvbp9XTDcO/bhjGl503HD5uUX/Mn1PxTPr964pTUkhygra+hj9U16V10LS6+/pUtFLxTAo/00GCa1j/DhtFDw2Lxw1T/A7rtTRWS+ZhES2rdS3O22lep/qBX1LZSmetFI+pfvzk1HximrW03g9ns4edadboIy2XafbDWt9/Zhqp6gEAAAAAAAAAwAu89Zl7u+00xFXse2ZiLdHcxO24PLx7DpLMvrxcHy9f3+WOUswvHYZVRg2TTNktqnqjTCa0Jmm4WZcZNUwxC3pwd5VPwyLJlN3JdnHV9zD2RqKZ7G9/rj4AAAAAAAAAAAAAAAD8T74DVhZG6MsBqOQAAAAASUVORK5CYII="
           alt="menu"
         />
-        <img
-          className="h-14 sm:h-20"
-          src="https://i.pinimg.com/originals/ce/a4/2c/cea42ced22ffdf9e66b2f12910067993.jpg"
-          alt="logo"
-        />
+        <Link to="/">
+          <img
+            className="h-14 sm:h-20"
+            src="https://i.pinimg.com/originals/ce/a4/2c/cea42ced22ffdf9e66b2f12910067993.jpg"
+            alt="logo"
+          />
+        </Link>
       </div>
-      <div className="sm:w-9/12 flex  ">
-        <input
-          type="text"
-          className="  ml-2 sm:w-full border border-gray-400 my-6 rounded-l-full"
-        />
-        <button className=" px-2 my-6 rounded-r-full border bg-gray-100 border-gray-400">
-          <FaSearch />
-        </button>
+      <div className=" flex  relative flex-col sm:w-9/12  ">
+        <div className="flex ">
+          <input
+            type="text"
+            className=" pl-4 ml-2 h-9 sm:w-full border border-gray-400 my-6 rounded-l-full"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onFocus={() => {
+              setShowSuggestion(true);
+            }}
+            onBlur={() => {
+              setShowSuggestion(false);
+            }}
+          />
+          <button className=" px-2 my-6 rounded-r-full border bg-gray-100 border-gray-400">
+            <FaSearch />
+          </button>
+        </div>
+        {showSuggestions && (
+          <div className=" w-[14rem] sm:w-full mt-16 absolute bg-white  ml-2 shadow-lg rounded-lg">
+            <ul className="px-4 *:py-1 hover:*:bg-gray-300">
+              {suggestions.map((suggestion) => {
+                return <li key={suggestion}>{suggestion}</li>;
+              })}
+            </ul>
+          </div>
+        )}
       </div>
       <div className=" flex w-1/12  ">
         <img

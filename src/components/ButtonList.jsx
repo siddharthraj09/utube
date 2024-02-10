@@ -17,9 +17,9 @@ import Button from "./Button";
 // };
 const ButtonList = () => {
   return (
-    <div className="flex overflow-x-auto">
+    <div className="flex overflow-x-auto ">
       {/* Dummy content to ensure horizontal scrolling */}
-      {/* <div className="flex-shrink-0 w-32">Dummy Content</div> */}
+      {/* <div className="flex-shrink-0 w-14"></div> */}
       <Button name="All" />
       <Button name="Gaming" />
       <Button name="Songs" />
@@ -27,7 +27,6 @@ const ButtonList = () => {
       <Button name="Mixes" />
       <Button name="Chess" />
       <Button name="Gadgets" />
-      {/* <div className="flex-shrink-0 w-32">Dummy Content</div> */}
     </div>
   );
 };

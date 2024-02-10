@@ -1,4 +1,5 @@
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const Sidebar = () => {
   const toggleMenu = useSelector((store) => {
@@ -7,10 +8,12 @@ const Sidebar = () => {
 
   if (!toggleMenu) return null;
   return (
-    <div className="pt-3 px-6 shadow-lg h-screen w-2/6 sm:w-48 ">
+    <div className="pt-3 px-6 shadow-lg h-screen  w-2/6 sm:w-1/6   bg-white">
       <div className="py-5">
-        <ul>
-          <li>Home </li>
+        <ul className="*:py-1">
+          <li>
+            <Link to="/">Home</Link>
+          </li>
           <li>Shorts </li>
           <li>Video </li>
           <li>Live</li>
@@ -18,7 +21,7 @@ const Sidebar = () => {
       </div>
       <div className="py-5">
         <h1 className="font-bold">Subscription</h1>
-        <ul>
+        <ul className="*:py-1">
           <li>Movies </li>
           <li>Sports </li>
           <li>Gaming </li>
@@ -27,7 +30,7 @@ const Sidebar = () => {
       </div>
       <div className="py-5">
         <h1 className="font-bold">Subscription</h1>
-        <ul>
+        <ul className="*:py-1">
           <li>Movies </li>
           <li>Sports </li>
           <li>Gaming </li>
